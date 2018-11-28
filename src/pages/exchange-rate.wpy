@@ -1,0 +1,364 @@
+<style lang="scss">
+  $row-height: 180rpx;
+  $active-color: orangered;
+  .page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #fafafa;
+    .currencies {
+      .currency {
+        display: flex;
+        justify-content: space-between;
+        margin: 0 40rpx;
+        height: $row-height;
+        & + .currency {
+          border-top: 1rpx solid #ddd;
+        }
+        .currency-picker {
+          height: $row-height;
+          height: $row-height;
+        }
+        .currency-label {
+          height: $row-height;
+          padding: 40rpx 0;
+          color: #000;
+          font-size: 44rpx;
+          position: relative;
+          padding-right: 40rpx; // 扩大右内补白, 而不是移动小三角, 以此扩大点击区域
+          &:after {
+            box-sizing: content-box;
+            content: '';
+            width: 0;
+            height: 0;
+            position: absolute;
+            right: 8rpx;
+            top: 64rpx; // 40 / 2 * 44
+            transform: translateY(-25%);
+            border: 8rpx solid #aaa;
+            border-color: #aaa transparent transparent transparent;
+          }
+        }
+        .currency-amount {
+          height: $row-height;
+          padding: 40rpx 0;
+          text-align: right;
+          flex-grow: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          .amount {
+            font-size: 56rpx;
+            color: #000;
+            &.more-than-15 {
+              font-size: 44rpx;
+            }
+            &.more-than-20 {
+              font-size: 40rpx;
+            }
+            &.more-than-25 {
+              font-size: 36rpx;
+            }
+            &.more-than-30 {
+              font-size: 30rpx;
+            }
+          }
+          .name {
+            margin-top: 20rpx;
+            font-size: 24rpx;
+            color: #999;
+          }
+        }
+        &.active {
+          .currency-amount {
+            .amount {
+              color: $active-color;
+            }
+          }
+        }
+      }
+    }
+    // 把通知与键盘包起来
+    .notification-and-keyboard {
+      .notification {
+        color: #bdbdbd;
+        font-size: 22rpx;
+        text-align: center;
+        margin-bottom: 16rpx;
+      }
+      .keyboard {
+        display: flex;
+        text-align: center;
+        background: #fff;
+        color: #444;
+        font-size: 46rpx;
+        .numbers-col {
+          width: 75%;
+          display: flex;
+          flex-wrap: wrap;
+          .tile {
+            height: calc(50vh / 4);
+            line-height: calc(50vh / 4);
+            border-right: 1rpx solid #ddd;
+            border-top: 1rpx solid #ddd;
+            width: 33.3333%;
+          }
+          .number-0 {
+            width: 66.6666%;
+          }
+        }
+        .functions-col {
+          width: 25%;
+          display: flex;
+          flex-direction: column;
+          .tile {
+            height: calc(50vh / 2);
+            line-height: calc(50vh / 2);
+            border-top: 1rpx solid #ddd;
+          }
+          .function-reset {
+            color: $active-color;
+          }
+          .function-del {
+            .icon {
+              width: 26%;
+              height: 100%;
+            }
+          }
+        }
+      }
+    }
+  }
+</style>
+<template>
+  <view class="page">
+    <view class="currencies">
+      <view class="currency {{active_display_currency_index === 0 ? 'active': ''}}">
+        <picker class="currency-picker" mode="selector" range="{{flat_currencies}}" @change="onPickCurrency"
+                data-index="0" value="{{display_currencies[0].picker_value}}">
+          <view class="currency-label">{{display_currencies[0].code}}</view>
+        </picker>
+        <view class="currency-amount" @tap="toggleActiveDisplayCurrency" data-index="0">
+          <view class="amount {{display_currencies[0].amount_str_with_commas.length > 15 ? 'more-than-15' : ''}} {{display_currencies[0].amount_str_with_commas.length > 20 ? 'more-than-20' : ''}} {{display_currencies[0].amount_str_with_commas.length > 25 ? 'more-than-25' : ''}} {{display_currencies[0].amount_str_with_commas.length > 30 ? 'more-than-30' : ''}}">{{display_currencies[0].amount_str_with_commas}}</view>
+          <view class="name">{{display_currencies[0].name}}</view>
+        </view>
+      </view>
+      <view class="currency {{active_display_currency_index === 1 ? 'active' : ''}}">
+        <picker class="currency-picker" mode="selector" range="{{flat_currencies}}" @change="onPickCurrency"
+                data-index="1" value="{{display_currencies[1].picker_value}}">
+          <view class="currency-label">{{display_currencies[1].code}}</view>
+        </picker>
+        <view class="currency-amount" @tap="toggleActiveDisplayCurrency" data-index="1">
+          <view class="amount {{display_currencies[1].amount_str_with_commas.length > 15 ? 'more-than-15' : ''}}">{{display_currencies[1].amount_str_with_commas}}</view>
+          <view class="name">{{display_currencies[1].name}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="notification-and-keyboard">
+      <view class="notification">
+        <view>{{notification}}</view>
+      </view>
+      <view class="keyboard">
+        <view class="numbers-col">
+          <view class="tile number number-7" @tap="onInput" data-input="7">7</view>
+          <view class="tile number number-8" @tap="onInput" data-input="8">8</view>
+          <view class="tile number number-9" @tap="onInput" data-input="9">9</view>
+          <view class="tile number number-4" @tap="onInput" data-input="4">4</view>
+          <view class="tile number number-5" @tap="onInput" data-input="5">5</view>
+          <view class="tile number number-6" @tap="onInput" data-input="6">6</view>
+          <view class="tile number number-1" @tap="onInput" data-input="1">1</view>
+          <view class="tile number number-2" @tap="onInput" data-input="2">2</view>
+          <view class="tile number number-3" @tap="onInput" data-input="3">3</view>
+          <view class="tile number number-0" @tap="onInput" data-input="0">0</view>
+          <view class="tile number dot" @tap="onInput" data-input=".">.</view>
+        </view>
+        <view class="functions-col">
+          <view class="tile function function-reset" @tap="onReset" data-input="AC">AC</view>
+          <view class="tile function function-del" @tap="onDel" data-input="DEL" title="DEL">
+            <image class="icon" src="../../images/icons/backspace-grey.png" mode="widthFix"></image>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import moment from 'moment'
+  import { showToast, formatCurrency } from '../utils'
+
+  export default class ExchangeRateCalculator extends wepy.page {
+    config = {
+      navigationBarTitleText: '汇率换算'
+    }
+
+    data = {
+      display_currencies: [
+        {
+          code: 'CNY',
+          name: '人民币',
+          amount_str: '1',
+          amount_str_with_commas: '1',
+          picker_value: 0
+        },
+        {
+          code: 'USD',
+          name: '美元',
+          amount_str: '0',
+          amount_str_with_commas: '0',
+          picker_value: 1
+        }
+      ],
+      active_display_currency_index: 0,
+      currencies: [],
+      flat_currencies: [],
+      input_amount_max_length: 15,
+      exchange_rate_cache: [],
+      notification: '正在更新汇率数据'
+    }
+
+    methods = {
+      // 币种激活为当前的
+      toggleActiveDisplayCurrency(e) {
+        this.active_display_currency_index = +e.currentTarget.dataset.index
+        this.display_currencies[this.active_display_currency_index].amount_str = '1'
+        this.display_currencies[this.active_display_currency_index].amount_str_with_commas = '1'
+        this.calculate()
+      },
+      // 币种切换
+      onPickCurrency(e) {
+        const pickerIndex = +e.currentTarget.dataset.index
+        console.log('pickerIndex', pickerIndex)
+        const nextCurrencyIndex = +e.detail.value
+        this.display_currencies[pickerIndex] = {
+          ...this.display_currencies[pickerIndex],
+          ...this.currencies[nextCurrencyIndex],
+          picker_value: nextCurrencyIndex
+        }
+        this.getCurrencyExchangeRate(this.display_currencies[0].code, this.display_currencies[1].code)
+      },
+      // 用户输入
+      onInput(e) {
+        if (this.display_currencies[this.active_display_currency_index].amount_str.length >= this.input_amount_max_length) {
+          return
+        }
+        const inputStr = e.currentTarget.dataset.input
+        // 输入的点, 已经有小数点的话就返回
+        if (inputStr === '.' && this.display_currencies[this.active_display_currency_index].amount_str.includes('.')) {
+          return
+        }
+
+        // 输入的 0, 已经是 0 开头的就返回
+        if (inputStr === '0' && this.display_currencies[this.active_display_currency_index].amount_str === '0') {
+          return
+        }
+
+        // 输入的不是点, 但当前是 0, 那用新输入的换掉当前的
+        if (inputStr !== '.' && this.display_currencies[this.active_display_currency_index].amount_str === '0') {
+          this.display_currencies[this.active_display_currency_index].amount_str = inputStr
+          this.display_currencies[this.active_display_currency_index].amount_str_with_commas = formatCurrency(this.display_currencies[this.active_display_currency_index].amount_str)
+        } else {
+          // 其它情况, 拼接到当前金额字符串上去
+          this.display_currencies[this.active_display_currency_index].amount_str = `${this.display_currencies[this.active_display_currency_index].amount_str}${inputStr}`
+
+          // 输入的是点, 但显示的还是要单独处理
+          if (inputStr === '.') {
+            this.display_currencies[this.active_display_currency_index].amount_str_with_commas = this.display_currencies[this.active_display_currency_index].amount_str_with_commas + '.'
+          } else {
+            this.display_currencies[this.active_display_currency_index].amount_str_with_commas = formatCurrency(this.display_currencies[this.active_display_currency_index].amount_str)
+          }
+        }
+        this.calculate()
+      },
+      // 清零
+      onReset() {
+        this._reset()
+      },
+      // 删除一位
+      onDel() {
+        // 只剩一位数了, 全部清零
+        if (this.display_currencies[this.active_display_currency_index].amount_str.length === 1) {
+          this._reset()
+          return
+        }
+
+        // 还有很多位, 删掉一位, 重新计算
+        this.display_currencies[this.active_display_currency_index].amount_str = this.display_currencies[this.active_display_currency_index].amount_str.slice(0, -1)
+        this.display_currencies[this.active_display_currency_index].amount_str_with_commas = formatCurrency(this.display_currencies[this.active_display_currency_index].amount_str)
+        this.calculate()
+      }
+    }
+
+    // 实际清零
+    _reset() {
+      this.display_currencies[0].amount_str = '0'
+      this.display_currencies[0].amount_str_with_commas = '0'
+      this.display_currencies[1].amount_str = '0'
+      this.display_currencies[1].amount_str_with_commas = '0'
+    }
+
+    // 取汇率
+    getCurrencyExchangeRate(code1, code2) {
+      // 看看缓存里有木有先
+      const cacheKey = `${code1}-${code2}`
+      if (this.exchange_rate_cache[cacheKey]) {
+        this.current_exchange_rate = this.exchange_rate_cache[cacheKey]
+        this.calculate()
+        return
+      }
+
+      // 没有的话再去后台取
+      wx.showNavigationBarLoading()
+      wepy.$apiService.getCurrencyExchangeRate(code1, code2)
+        .subscribe(
+          data => {
+            wx.hideNavigationBarLoading()
+            this.current_exchange_rate = data
+            this.exchange_rate_cache[cacheKey] = data
+            this.calculate()
+          },
+          error => {
+            wx.hideNavigationBarLoading()
+            showToast(error.message)
+          }
+        )
+    }
+
+    // 计算
+    calculate() {
+      if (this.active_display_currency_index === 0) {
+        let oldVal = parseFloat(this.display_currencies[0].amount_str)
+        let newVal = parseFloat((oldVal * this.current_exchange_rate[0].exchange).toFixed(4))
+        this.display_currencies[1].amount_str = `${newVal}`
+        this.display_currencies[1].amount_str_with_commas = formatCurrency(this.display_currencies[1].amount_str)
+      } else {
+        let oldVal = parseFloat(this.display_currencies[1].amount_str)
+        let newVal = parseFloat((oldVal * this.current_exchange_rate[1].exchange).toFixed(4))
+        this.display_currencies[0].amount_str = `${newVal}`
+        this.display_currencies[0].amount_str_with_commas = formatCurrency(this.display_currencies[0].amount_str)
+      }
+    }
+
+    // 取币种
+    getCurrencies() {
+      wepy.$apiService.getCurrencies()
+        .subscribe(
+          data => {
+            this.currencies = data
+            this.flat_currencies = this.currencies.map(v => `${v.code} ${v.name}`)
+
+            // 显示一条汇率信息消息在虚拟键盘上方
+            const now = moment().format('YYYY年MM月DD日')
+            this.notification = `汇率数据由聚合数据提供，更新于 ${now}`
+          }
+        )
+    }
+
+    onLoad() {
+      this.getCurrencies()
+      this.getCurrencyExchangeRate(this.display_currencies[0].code, this.display_currencies[1].code)
+    }
+  }
+</script>

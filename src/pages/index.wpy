@@ -1,17 +1,82 @@
-<style lang="less">
+<style lang="scss">
+  $grid-border-color: #ddd;
+  .page {
+    font-size: 28rpx;
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      border-bottom: 1rpx solid $grid-border-color;
+      .grid-item {
+        width: 33.3333%;
+        height: 240rpx;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-right: 1rpx solid $grid-border-color;
+        border-top: 1rpx solid $grid-border-color;
+        &:nth-child(3n) {
+          border-right: none;
+        }
+        .item-icon {
+          width: 50rpx;
+        }
+        .item-text {
+          margin-top: 20rpx;
+        }
+      }
+    }
+  }
 </style>
 <template>
-  <view class="container">
-    Hello world
+  <view class="page">
+    <view class="grid">
+      <navigator class="grid-item" url="/pages/exchange-rate" hover-class="none">
+        <image class="item-icon" src="../images/icons/face-outline-black.png" mode="widthFix"></image>
+        <view class="item-text">汇率</view>
+      </navigator>
+      <view class="grid-item">
+        <image class="item-icon" src="../images/icons/face-outline-black.png" mode="widthFix"></image>
+        <view class="item-text">todo</view>
+      </view>
+      <view class="grid-item">
+        <image class="item-icon" src="../images/icons/face-outline-black.png" mode="widthFix"></image>
+        <view class="item-text">todo</view>
+      </view>
+      <view class="grid-item">
+        <image class="item-icon" src="../images/icons/face-outline-black.png" mode="widthFix"></image>
+        <view class="item-text">todo</view>
+      </view>
+      <view class="grid-item">
+        <image class="item-icon" src="../images/icons/face-outline-black.png" mode="widthFix"></image>
+        <view class="item-text">todo</view>
+      </view>
+      <view class="grid-item">
+        <image class="item-icon" src="../images/icons/face-outline-black.png" mode="widthFix"></image>
+        <view class="item-text">todo</view>
+      </view>
+      <view class="grid-item">
+        <image class="item-icon" src="../images/icons/face-outline-black.png" mode="widthFix"></image>
+        <view class="item-text">todo</view>
+      </view>
+      <view class="grid-item">
+        <image class="item-icon" src="../images/icons/face-outline-black.png" mode="widthFix"></image>
+        <view class="item-text">todo</view>
+      </view>
+      <view class="grid-item">
+        <image class="item-icon" src="../images/icons/face-outline-black.png" mode="widthFix"></image>
+        <view class="item-text">todo</view>
+      </view>
+    </view>
   </view>
 </template>
 
 <script>
   import wepy from 'wepy'
 
-  export default class Index extends wepy.page {
+  export default class Calculator extends wepy.page {
     config = {
-      navigationBarTitleText: 'test'
+      navigationBarTitleText: '小米计算器'
     }
     onLoad() {
       console.log('onLoad')

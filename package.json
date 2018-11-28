@@ -1,16 +1,21 @@
 {
   "name": "wepy-xiaomi-calculator",
   "version": "0.0.1",
-  "description": "小米计算器小程序版",
+  "description": "小米计算器",
   "main": "dist/app.js",
   "scripts": {
     "dev": "wepy build --watch",
+    "watch": "wepy build --watch",
+    "clean": "find ./dist -maxdepth 1 -not -name 'project.config.json' -not -name 'dist' | xargs rm -rf",
     "build": "cross-env NODE_ENV=production wepy build --no-cache",
+    "prod": "cross-env NODE_ENV=production wepy build --no-cache",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "bond <shrekuu@163.com>",
   "license": "MIT",
   "dependencies": {
+    "moment": "^2.22.2",
+    "rxjs6-wx": "^2.0.5",
     "wepy": "^1.7.2"
   },
   "devDependencies": {
@@ -30,6 +35,7 @@
     "less": "^3.8.1",
     "wepy-compiler-babel": "^1.5.1",
     "wepy-compiler-less": "^1.3.14",
+    "wepy-compiler-sass": "^1.3.12",
     "wepy-eslint": "^1.5.3"
   }
 }

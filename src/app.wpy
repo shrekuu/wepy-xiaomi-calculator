@@ -1,24 +1,30 @@
-<style lang="less">
+<style lang="scss">
+    @import "styles/includes";
 </style>
 
 <script>
-import wepy from 'wepy'
+  import wepy from 'wepy'
+  import ApiService from './services/api-service'
 
-export default class extends wepy.app {
-  config = {
-    pages: [
-      'pages/index'
-    ],
-    window: {
-      backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'black'
+  // api
+  wepy.$apiService = new ApiService()
+
+  export default class extends wepy.app {
+    config = {
+      pages: [
+        'pages/index',
+        'pages/exchange-rate'
+      ],
+      window: {
+        backgroundTextStyle: 'light',
+        navigationBarBackgroundColor: '#fff',
+        navigationBarTitleText: 'WeChat',
+        navigationBarTextStyle: 'black'
+      }
+    }
+
+    onLaunch() {
+      console.log('on launch')
     }
   }
-
-  onLaunch() {
-    console.log('on launch')
-  }
-}
 </script>

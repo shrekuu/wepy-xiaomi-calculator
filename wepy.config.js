@@ -5,21 +5,22 @@ module.exports = {
   eslint: true,
   cliLogs: true,
   compilers: {
-    less: {
-      compress: true
-    },
-    /*sass: {
+    // less: {
+    //   compress: true
+    // },
+    sass: {
       outputStyle: 'compressed'
-    },*/
+    },
     babel: {
       sourceMap: true,
       presets: [
         'env'
       ],
       plugins: [
-        'babel-plugin-transform-class-properties',
-        'transform-export-extensions',
-        'syntax-export-extensions'
+        'transform-class-properties',
+        'transform-decorators-legacy',
+        'transform-object-rest-spread',
+        'transform-export-extensions'
       ]
     }
   },
@@ -31,17 +32,16 @@ module.exports = {
 }
 
 if (prod) {
+  module.exports.cliLogs = false
 
-  module.exports.cliLogs = false;
-
-  delete module.exports.compilers.babel.sourcesMap;
+  delete module.exports.compilers.babel.sourcesMap
   // 压缩sass
-  // module.exports.compilers['sass'] = {outputStyle: 'compressed'}
+  module.exports.compilers['sass'] = {outputStyle: 'compressed'}
 
   // 压缩less
-  module.exports.compilers['less'] = {
-    compress: true
-  }
+  // module.exports.compilers['less'] = {
+  //   compress: true
+  // }
 
   // 压缩js
   module.exports.plugins = {
@@ -49,17 +49,17 @@ if (prod) {
       filter: /\.js$/,
       config: {
       }
-    },
-    imagemin: {
-      filter: /\.(jpg|png|jpeg)$/,
-      config: {
-        jpg: {
-          quality: 80
-        },
-        png: {
-          quality: 80
-        }
-      }
+    // },
+    // imagemin: {
+    //   filter: /\.(jpg|png|jpeg)$/,
+    //   config: {
+    //     jpg: {
+    //       quality: 80
+    //     },
+    //     png: {
+    //       quality: 80
+    //     }
+    //   }
     }
   }
 }
